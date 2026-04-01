@@ -225,12 +225,26 @@ function dodajLek() {
 
     wczytajLeki();
 
-    Notification.requestPermission().then(p => {
+
+async function ensureSubscription() {
+    const permission = Notification.permission;
+
+    if (permission === "granted") {
+        console.log("Permission granted — forcing subscribeUser()");
+        await subscribeUser();
+        await syncDrugsToServer();
+    } else if (permission === "default") {
+        const p = await Notification.requestPermission();
         if (p === "granted") {
-            subscribeUser();
-            syncDrugsToServer();
+            console.log("User granted permission — subscribing");
+            await subscribeUser();
+            await syncDrugsToServer();
         }
-    });
+    } else {
+        console.log("Permission denied — user must enable notifications manually");
+    }
+}
+
 }
 
 function usunLek(i) {
