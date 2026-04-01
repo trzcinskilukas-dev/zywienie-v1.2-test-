@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<title>Kalkulator żywienia i leków</title>
+<title>Kalkulator żywienia</title>
 
 <!-- Manifest -->
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="/zywienie-v1.2-test-/manifest.webmanifest">
 
 <!-- Kolor motywu -->
 <meta name="theme-color" content="#0078ff" />
 
 <!-- Ikony -->
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" sizes="192x192" href="icon-192.png">
-<link rel="icon" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" href="/zywienie-v1.2-test-/icon-192.png">
+<link rel="icon" sizes="192x192" href="/zywienie-v1.2-test-/icon-192.png">
+<link rel="icon" sizes="512x512" href="/zywienie-v1.2-test-/icon-512.png">
 
 <style>
     body {
@@ -26,15 +27,14 @@
     }
     h1 { text-align: center; margin-bottom: 25px; }
 
-    /* Navigation */
     .nav {
         display: flex;
         justify-content: center;
         margin-bottom: 25px;
+        gap: 8px;
     }
     .nav button {
         padding: 10px 20px;
-        margin: 0 5px;
         border: none;
         background: #dce7ff;
         border-radius: 8px;
@@ -70,17 +70,8 @@
         border-radius: 10px; border-left: 5px solid #0078ff;
     }
 
-    /* Leki */
-    .drug-inputs {
-        display: flex;
-        gap: 5px;
-        margin-bottom: 10px;
-    }
-    .drug-inputs input {
-        flex: 1;
-        font-size: 14px;
-    }
-
+    .drug-inputs { display: flex; gap: 5px; margin-bottom: 10px; }
+    .drug-inputs input { flex: 1; font-size: 14px; }
     .drug-card {
         background: #fff;
         padding: 15px;
@@ -88,10 +79,7 @@
         margin-top: 15px;
         box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
-    .drug-actions {
-        text-align: right;
-        margin-top: 8px;
-    }
+    .drug-actions { text-align: right; margin-top: 8px; }
     .link { color: #0078ff; margin-left: 8px; cursor: pointer; }
 </style>
 </head>
@@ -105,9 +93,7 @@
     <button id="tab-leki">Leki</button>
 </div>
 
-<!-- =====================
-     ZAKŁADKA 1 — ŻYWIENIE
-===================== -->
+<!-- ===================== ŻYWIENIE ===================== -->
 <div id="page-zywienie" class="card">
 
     <label>Porcja dzienna (ml)</label>
@@ -126,9 +112,8 @@
 
     <div id="wynik" class="result" style="display:none"></div>
 </div>
-<!-- =====================
-     ZAKŁADKA 2 — LEKI
-===================== -->
+
+<!-- ===================== LEKI ===================== -->
 <div id="page-leki" class="card" style="display:none">
 
     <div class="drug-inputs">
@@ -143,42 +128,31 @@
 </div>
 
 <script>
-// --------------------------------------
-//  KONFIGURACJA BACKENDU RENDER
-// --------------------------------------
+// ------------------- BACKEND RENDER -------------------
 const BACKEND = "https://kalkulator-backend-4sm5.onrender.com";
 const PUBLIC_VAPID_KEY = "Bp25KqE5Oj79kg2yiLvThWtrl6Ao4yHtN4UaFqljwYs-8OkKQ6xD-LZ2rNh7so1jDP85zvlFIzJp29uKOZMqUrg";
 
-// -------------------
-// ZAKŁADKI
-// -------------------
-document.getElementById("tab-zywienie").onclick = () => {
-    page("zywienie");
-};
-document.getElementById("tab-leki").onclick = () => {
-    page("leki");
-};
+// ------------------- ZAKŁADKI -------------------
+document.getElementById("tab-zywienie").onclick = () => page("zywienie");
+document.getElementById("tab-leki").onclick = () => page("leki");
 
-function page(x) {
-    document.getElementById("page-zywienie").style.display = x === "zywienie" ? "block" : "none";
-    document.getElementById("page-leki").style.display = x === "leki" ? "block" : "none";
+function page(p) {
+    document.getElementById("page-zywienie").style.display = p === "zywienie" ? "block" : "none";
+    document.getElementById("page-leki").style.display = p === "leki" ? "block" : "none";
 
-    document.getElementById("tab-zywienie").classList.toggle("active", x === "zywienie");
-    document.getElementById("tab-leki").classList.toggle("active", x === "leki");
+    document.getElementById("tab-zywienie").classList.toggle("active", p === "zywienie");
+    document.getElementById("tab-leki").classList.toggle("active", p === "leki");
 }
 
-// -------------------
-// KALKULATOR
-// -------------------
-window.onload = function () {
-    ['dzienna','zoladek_ml','zoladek_razy','jelito_ml'].forEach(id => {
-        if(localStorage.getItem(id)){
-            document.getElementById(id).value = localStorage.getItem(id);
-        }
+// ------------------- ŁADOWANIE DANYCH -------------------
+window.onload = () => {
+    ["dzienna","zoladek_ml","zoladek_razy","jelito_ml"].forEach(id => {
+        if(localStorage.getItem(id)) document.getElementById(id).value = localStorage.getItem(id);
     });
     wczytajLeki();
 };
 
+// ------------------- KALKULATOR -------------------
 function dokument(id){ return document.getElementById(id).value; }
 
 function wyswietl(html){
@@ -188,36 +162,33 @@ function wyswietl(html){
 }
 
 function oblicz() {
-    const dzienna = Number(dokument('dzienna'));
-    const zoladek_ml = Number(dokument('zoladek_ml'));
-    const zoladek_razy = Number(dokument('zoladek_razy'));
-    const jelito_ml = Number(dokument('jelito_ml'));
+    const dzienna = +dokument('dzienna');
+    const zm = +dokument('zoladek_ml');
+    const zr = +dokument('zoladek_razy');
+    const jel = +dokument('jelito_ml');
 
-    ['dzienna','zoladek_ml','zoladek_razy','jelito_ml']
-        .forEach(id => localStorage.setItem(id, dokument(id)));
+    ["dzienna","zoladek_ml","zoladek_razy","jelito_ml"].forEach(id => localStorage.setItem(id, dokument(id)));
 
-    const zoladek_total = zoladek_ml * zoladek_razy;
-    const jelito_pozostale = dzienna - zoladek_total;
+    const zol_total = zm * zr;
+    const jel_rest = dzienna - zol_total;
 
-    if (jelito_pozostale < 0) {
+    if (jel_rest < 0) {
         wyswietl("❗ Podanie do żołądka przekracza dzienną porcję!");
         return;
     }
 
-    const godziny_jelito = jelito_pozostale / jelito_ml;
-    const godziny_odlaczenia = 24 - godziny_jelito;
+    const godz_jel = jel_rest / jel;
+    const godz_odl = 24 - godz_jel;
 
     wyswietl(`
-        <p><b>Łącznie do żołądka:</b> ${zoladek_total} ml</p>
-        <p><b>Mleko do jelita:</b> ${jelito_pozostale} ml</p>
-        <p><b>Czas podawania do jelita:</b> ${godziny_jelito.toFixed(1)} h</p>
-        <p><b>Czas odłączenia:</b> ${godziny_odlaczenia.toFixed(1)} h</p>
+        <p><b>Łącznie do żołądka:</b> ${zol_total} ml</p>
+        <p><b>Mleko do jelita:</b> ${jel_rest} ml</p>
+        <p><b>Czas podawania do jelita:</b> ${godz_jel.toFixed(1)} h</p>
+        <p><b>Czas odłączenia:</b> ${godz_odl.toFixed(1)} h</p>
     `);
 }
 
-// -------------------
-// LEKI
-// -------------------
+// ------------------- LEKI -------------------
 function wczytajLeki() {
     const dane = JSON.parse(localStorage.getItem("leki") || "[]");
     const lista = document.getElementById("lista-lekow");
@@ -225,29 +196,31 @@ function wczytajLeki() {
 
     dane.sort((a,b) => a.time.localeCompare(b.time));
 
-    dane.forEach((lek, index) => {
-        const div = document.createElement("div");
-        div.className = "drug-card";
-        div.innerHTML = `
+    dane.forEach((lek,i) => {
+        const div=document.createElement("div");
+        div.className="drug-card";
+        div.innerHTML=`
             <b>${lek.name}</b>
             <div>Dawka: ${lek.dose}</div>
             <div>Godzina: ${lek.time}</div>
             <div class="drug-actions">
-                <span class="link" onclick="edytujLek(${index})">Edytuj</span>
-                <span class="link" onclick="usunLek(${index})">Usuń</span>
+                <span class="link" onclick="edytujLek(${i})">Edytuj</span>
+                <span class="link" onclick="usunLek(${i})">Usuń</span>
             </div>
         `;
         lista.appendChild(div);
     });
 }
+
 function dodajLek() {
     const nazwa = dokument("lek_nazwa");
     const dawka = dokument("lek_dawka");
     const godz = dokument("lek_godzina");
+
     if (!nazwa || !dawka || !godz) return;
 
     const dane = JSON.parse(localStorage.getItem("leki") || "[]");
-    dane.push({ name: nazwa, dose: dawka, time: godz });
+    dane.push({name:nazwa, dose:dawka, time:godz});
     localStorage.setItem("leki", JSON.stringify(dane));
 
     wczytajLeki();
@@ -262,15 +235,15 @@ function dodajLek() {
 
 function usunLek(i) {
     const dane = JSON.parse(localStorage.getItem("leki") || "[]");
-    dane.splice(i, 1);
+    dane.splice(i,1);
     localStorage.setItem("leki", JSON.stringify(dane));
     wczytajLeki();
     syncDrugsToServer();
 }
 
-function edytujLek(i) {
+function edytujLek(i){
     const dane = JSON.parse(localStorage.getItem("leki") || "[]");
-    const lek = dane[i];
+    const lek=dane[i];
 
     document.getElementById("lek_nazwa").value = lek.name;
     document.getElementById("lek_dawka").value = lek.dose;
@@ -279,9 +252,7 @@ function edytujLek(i) {
     usunLek(i);
 }
 
-// -------------------
-// SUBSKRYPCJA PUSH
-// -------------------
+// ------------------- SUBSKRYPCJA PUSH -------------------
 async function subscribeUser() {
     const reg = await navigator.serviceWorker.ready;
 
@@ -292,29 +263,25 @@ async function subscribeUser() {
 
     await fetch(BACKEND + "/push/subscribe", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(sub)
     });
 }
 
-// -------------------
-// SYNC LEKÓW DO BACKENDU
-// -------------------
+// ------------------- SYNC LEKÓW DO BACKENDU -------------------
 async function syncDrugsToServer() {
     const leki = JSON.parse(localStorage.getItem("leki") || "[]");
 
     await fetch(BACKEND + "/drugs/update", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(leki)
     });
 }
 
-// -------------------
-// SERVICE WORKER
-// -------------------
+// ------------------- REJESTRACJA SERVICE WORKERA -------------------
 if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js");
+    navigator.serviceWorker.register("/zywienie-v1.2-test-/service-worker.js");
 }
 </script>
 

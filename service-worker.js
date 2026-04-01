@@ -5,20 +5,20 @@
 // Wersja cache PWA
 const CACHE_NAME = "kalkulator-cache-v3";
 
-// Pliki do cache (bez prefixów – root repo)
+// Pliki do cache (zawsze z prefixem repo GitHub Pages)
 const FILES = [
-  "index.html",
-  "manifest.webmanifest",
-  "service-worker.js",
-  "icon-192.png",
-  "icon-512.png"
+  "/zywienie-v1.2-test-/",
+  "/zywienie-v1.2-test-/index.html",
+  "/zywienie-v1.2-test-/manifest.webmanifest",
+  "/zywienie-v1.2-test-/service-worker.js",
+  "/zywienie-v1.2-test-/icon-192.png",
+  "/zywienie-v1.2-test-/icon-512.png"
 ];
 
 // Instalacja SW → zapis do cache
 self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(FILES))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(FILES)));
+  self.skipWaiting();
 });
 
 // Tryb offline – próba pobrania z cache, jeśli brak internetu
@@ -39,13 +39,13 @@ self.addEventListener("push", event => {
   try {
     data = event.data.json();
   } catch (err) {
-    console.warn("Push event bez JSON:", err);
+    console.warn("Push event bez danych JSON:", err);
   }
 
   const title = data.title || "Powiadomienie";
   const body  = data.body  || "";
-  const icon  = "icon-192.png";
-  const badge = "icon-192.png";
+  const icon  = "/zywienie-v1.2-test-/icon-192.png";
+  const badge = "/zywienie-v1.2-test-/icon-192.png";
 
   event.waitUntil(
     self.registration.showNotification(title, {
@@ -68,11 +68,10 @@ self.addEventListener("notificationclick", event => {
     clients.matchAll({ type: "window", includeUncontrolled: true })
       .then(windowClients => {
         for (let client of windowClients) {
-          // jeśli aplikacja już działa → aktywuj ją
           if ("focus" in client) return client.focus();
         }
-        // inaczej otwórz nową kartę
-        return clients.openWindow("./");
+
+        return clients.openWindow("/zywienie-v1.2-test-/");
       })
   );
 });
