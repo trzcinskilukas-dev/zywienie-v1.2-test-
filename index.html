@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="pl">
-
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-
 <title>Kalkulator żywienia</title>
 
 <!-- Manifest -->
@@ -19,68 +17,39 @@
 <link rel="icon" sizes="512x512" href="/zywienie-v1.2-test-/icon-512.png">
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 20px;
-        background: #f0f3f7;
-    }
-    h1 { text-align: center; margin-bottom: 25px; }
+    body { font-family: Arial; margin: 0; padding: 20px; background: #f0f3f7; }
+    h1 { text-align:center; margin-bottom:25px; }
 
-    .nav {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 25px;
-        gap: 8px;
-    }
+    .nav { display:flex; justify-content:center; margin-bottom:25px; gap:8px; }
     .nav button {
-        padding: 10px 20px;
-        border: none;
-        background: #dce7ff;
-        border-radius: 8px;
-        font-size: 16px;
+        padding:10px 20px; border:none; background:#dce7ff;
+        border-radius:8px; font-size:16px;
     }
-    .nav .active {
-        background: #0078ff;
-        color: white;
-    }
+    .nav .active { background:#0078ff; color:white; }
 
     .card {
-        background: #fff;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        max-width: 480px;
-        margin: auto;
+        background:#fff; padding:20px; border-radius:12px;
+        max-width:480px; margin:auto; box-shadow:0 4px 10px rgba(0,0,0,0.1);
     }
 
-    label { font-weight: bold; margin-top: 15px; display: block; }
-    input {
-        width: 100%; padding: 10px; margin-top: 6px;
-        border-radius: 8px; border: 1px solid #ccc;
-        font-size: 16px;
+    label { display:block; margin-top:15px; font-weight:bold; }
+    input { width:100%; padding:10px; margin-top:6px; border-radius:8px; border:1px solid #ccc; }
+
+    .action { width:100%; padding:12px; margin-top:20px;
+        background:#0078ff; color:white; border:none; border-radius:10px; font-size:18px;
     }
-    button.action {
-        width: 100%; padding: 12px; font-size: 18px;
-        border: none; background: #0078ff; color: white;
-        border-radius: 10px; margin-top: 20px;
-    }
+
     .result {
-        background: #e6f1ff; padding: 18px; margin-top: 20px;
-        border-radius: 10px; border-left: 5px solid #0078ff;
+        background:#e6f1ff; padding:18px; margin-top:20px;
+        border-left:5px solid #0078ff; border-radius:10px;
     }
 
-    .drug-inputs { display: flex; gap: 5px; margin-bottom: 10px; }
-    .drug-inputs input { flex: 1; font-size: 14px; }
+    .drug-inputs { display:flex; gap:5px; margin-bottom:10px; }
     .drug-card {
-        background: #fff;
-        padding: 15px;
-        border-radius: 10px;
-        margin-top: 15px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        background:#fff; padding:15px; margin-top:15px;
+        border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);
     }
-    .drug-actions { text-align: right; margin-top: 8px; }
-    .link { color: #0078ff; margin-left: 8px; cursor: pointer; }
+    .link { color:#0078ff; cursor:pointer; margin-left:8px; }
 </style>
 </head>
 
@@ -93,7 +62,7 @@
     <button id="tab-leki">Leki</button>
 </div>
 
-<!-- ===================== ŻYWIENIE ===================== -->
+<!-- ---------------- ŻYWIENIE ---------------- -->
 <div id="page-zywienie" class="card">
 
     <label>Porcja dzienna (ml)</label>
@@ -105,7 +74,7 @@
     <label>Podanie do żołądka – razy dziennie</label>
     <input id="zoladek_razy" type="number">
 
-    <label>Podanie do jelita – ilość (ml / godzinę)</label>
+    <label>Podanie do jelita – ilość (ml/godz)</label>
     <input id="jelito_ml" type="number">
 
     <button class="action" onclick="oblicz()">Oblicz</button>
@@ -113,7 +82,7 @@
     <div id="wynik" class="result" style="display:none"></div>
 </div>
 
-<!-- ===================== LEKI ===================== -->
+<!-- ---------------- LEKI ---------------- -->
 <div id="page-leki" class="card" style="display:none">
 
     <div class="drug-inputs">
@@ -128,7 +97,9 @@
 </div>
 
 <script>
-// ------------------- BACKEND RENDER -------------------
+// ========================
+//   KONFIGURACJA BACKENDU
+// ========================
 const BACKEND = "https://kalkulator-backend-4sm5.onrender.com";
 const PUBLIC_VAPID_KEY = "Bp25KqE5Oj79kg2yiLvThWtrl6Ao4yHtN4UaFqljwYs-8OkKQ6xD-LZ2rNh7so1jDP85zvlFIzJp29uKOZMqUrg";
 
@@ -144,160 +115,16 @@ function page(p) {
     document.getElementById("tab-leki").classList.toggle("active", p === "leki");
 }
 
-// ------------------- ŁADOWANIE DANYCH -------------------
+// ------------------- ŁADOWANIE -------------------
 window.onload = () => {
-    ["dzienna","zoladek_ml","zoladek_razy","jelito_ml"].forEach(id => {
-        if(localStorage.getItem(id)) document.getElementById(id).value = localStorage.getItem(id);
+    ["dzienna","zoladek_ml","zoladek_razy","jelito_ml"].forEach(id=>{
+        if (localStorage.getItem(id)) document.getElementById(id).value = localStorage.getItem(id);
     });
     wczytajLeki();
 };
 
-// ------------------- KALKULATOR -------------------
+// ------------------- ŻYWIENIE -------------------
 function dokument(id){ return document.getElementById(id).value; }
 
 function wyswietl(html){
-    const el = document.getElementById("wynik");
-    el.style.display = "block";
-    el.innerHTML = html;
-}
-
-function oblicz() {
-    const dzienna = +dokument('dzienna');
-    const zm = +dokument('zoladek_ml');
-    const zr = +dokument('zoladek_razy');
-    const jel = +dokument('jelito_ml');
-
-    ["dzienna","zoladek_ml","zoladek_razy","jelito_ml"].forEach(id => localStorage.setItem(id, dokument(id)));
-
-    const zol_total = zm * zr;
-    const jel_rest = dzienna - zol_total;
-
-    if (jel_rest < 0) {
-        wyswietl("❗ Podanie do żołądka przekracza dzienną porcję!");
-        return;
-    }
-
-    const godz_jel = jel_rest / jel;
-    const godz_odl = 24 - godz_jel;
-
-    wyswietl(`
-        <p><b>Łącznie do żołądka:</b> ${zol_total} ml</p>
-        <p><b>Mleko do jelita:</b> ${jel_rest} ml</p>
-        <p><b>Czas podawania do jelita:</b> ${godz_jel.toFixed(1)} h</p>
-        <p><b>Czas odłączenia:</b> ${godz_odl.toFixed(1)} h</p>
-    `);
-}
-
-// ------------------- LEKI -------------------
-function wczytajLeki() {
-    const dane = JSON.parse(localStorage.getItem("leki") || "[]");
-    const lista = document.getElementById("lista-lekow");
-    lista.innerHTML = "";
-
-    dane.sort((a,b) => a.time.localeCompare(b.time));
-
-    dane.forEach((lek,i) => {
-        const div=document.createElement("div");
-        div.className="drug-card";
-        div.innerHTML=`
-            <b>${lek.name}</b>
-            <div>Dawka: ${lek.dose}</div>
-            <div>Godzina: ${lek.time}</div>
-            <div class="drug-actions">
-                <span class="link" onclick="edytujLek(${i})">Edytuj</span>
-                <span class="link" onclick="usunLek(${i})">Usuń</span>
-            </div>
-        `;
-        lista.appendChild(div);
-    });
-}
-
-function dodajLek() {
-    const nazwa = dokument("lek_nazwa");
-    const dawka = dokument("lek_dawka");
-    const godz = dokument("lek_godzina");
-
-    if (!nazwa || !dawka || !godz) return;
-
-    const dane = JSON.parse(localStorage.getItem("leki") || "[]");
-    dane.push({name:nazwa, dose:dawka, time:godz});
-    localStorage.setItem("leki", JSON.stringify(dane));
-
-    wczytajLeki();
-
-
-async function ensureSubscription() {
-    const permission = Notification.permission;
-
-    if (permission === "granted") {
-        console.log("Permission granted — forcing subscribeUser()");
-        await subscribeUser();
-        await syncDrugsToServer();
-    } else if (permission === "default") {
-        const p = await Notification.requestPermission();
-        if (p === "granted") {
-            console.log("User granted permission — subscribing");
-            await subscribeUser();
-            await syncDrugsToServer();
-        }
-    } else {
-        console.log("Permission denied — user must enable notifications manually");
-    }
-}
-
-}
-
-function usunLek(i) {
-    const dane = JSON.parse(localStorage.getItem("leki") || "[]");
-    dane.splice(i,1);
-    localStorage.setItem("leki", JSON.stringify(dane));
-    wczytajLeki();
-    syncDrugsToServer();
-}
-
-function edytujLek(i){
-    const dane = JSON.parse(localStorage.getItem("leki") || "[]");
-    const lek=dane[i];
-
-    document.getElementById("lek_nazwa").value = lek.name;
-    document.getElementById("lek_dawka").value = lek.dose;
-    document.getElementById("lek_godzina").value = lek.time;
-
-    usunLek(i);
-}
-
-// ------------------- SUBSKRYPCJA PUSH -------------------
-async function subscribeUser() {
-    const reg = await navigator.serviceWorker.ready;
-
-    const sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: PUBLIC_VAPID_KEY
-    });
-
-    await fetch(BACKEND + "/push/subscribe", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(sub)
-    });
-}
-
-// ------------------- SYNC LEKÓW DO BACKENDU -------------------
-async function syncDrugsToServer() {
-    const leki = JSON.parse(localStorage.getItem("leki") || "[]");
-
-    await fetch(BACKEND + "/drugs/update", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(leki)
-    });
-}
-
-// ------------------- REJESTRACJA SERVICE WORKERA -------------------
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/zywienie-v1.2-test-/service-worker.js");
-}
-</script>
-
-</body>
-</html>
+    const el=document.getElementById("wynik");
