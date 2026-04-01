@@ -9,7 +9,8 @@
     <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#0078ff">
 
-    <!-- Ikony masz osobno -->
+    <!-- Ikony (dodasz sam) -->
+    <link rel="icon" href="icon-192.png">
 </head>
 
 <body>
@@ -58,21 +59,20 @@
     <div id="lista-lekow"></div>
 </div>
 
-
 <script>
-/* -------------------------
-   KONFIG BACKENDU RENDER
--------------------------- */
+// --------------------------------------
+// KONFIG BACKENDU (Render.com)
+// --------------------------------------
 const BACKEND = "https://kalkulator-backend.onrender.com";
 
-/* -------------------------
-   Klucz VAPID PUBLICZNY
--------------------------- */
+// --------------------------------------
+// PUBLICZNY KLUCZ VAPID
+// --------------------------------------
 const PUBLIC_VAPID_KEY = "Bp25KqE5Oj79kg2yiLvThWtrl6Ao4yHtN4UaFqljwYs-8OkKQ6xD-LZ2rNh7so1jDP85zvlFIzJp29uKOZMqUrg";
 
-/* -------------------------
-   ZAKŁADKI
--------------------------- */
+// --------------------------------------
+// ZAKŁADKI
+// --------------------------------------
 document.getElementById("tab-zywienie").onclick = () => page("zywienie");
 document.getElementById("tab-leki").onclick = () => page("leki");
 
@@ -84,9 +84,9 @@ function page(x) {
     document.getElementById("tab-leki").classList.toggle("active", x === "leki");
 }
 
-/* -------------------------
-   ŁADOWANIE DANYCH
--------------------------- */
+// --------------------------------------
+// ŁADOWANIE DANYCH
+// --------------------------------------
 window.onload = () => {
     ["dzienna","zoladek_ml","zoladek_razy","jelito_ml"].forEach(id => {
         if (localStorage.getItem(id)) {
@@ -97,9 +97,9 @@ window.onload = () => {
     wczytajLeki();
 };
 
-/* -------------------------
-   FUNKCJE POMOCNICZE
--------------------------- */
+// --------------------------------------
+// FUNKCJE POMOCNICZE
+// --------------------------------------
 function dokument(id){ return document.getElementById(id).value; }
 
 function wyswietl(html){
@@ -108,9 +108,9 @@ function wyswietl(html){
     el.innerHTML = html;
 }
 
-/* -------------------------
-   OBLICZENIA ŻYWIENIA
--------------------------- */
+// --------------------------------------
+// OBLICZENIA ŻYWIENIA
+// --------------------------------------
 function oblicz() {
     const dzienna       = Number(dokument('dzienna'));
     const zoladek_ml    = Number(dokument('zoladek_ml'));
@@ -139,9 +139,9 @@ function oblicz() {
     `);
 }
 
-/* -------------------------
-   LEKI — LISTA
--------------------------- */
+// --------------------------------------
+// LEKI
+// --------------------------------------
 function wczytajLeki() {
     const dane = JSON.parse(localStorage.getItem("leki") || "[]");
     const lista = document.getElementById("lista-lekow");
@@ -178,7 +178,6 @@ function dodajLek() {
 
     wczytajLeki();
 
-    // POWIADOMIENIA PUSH + SYNC
     Notification.requestPermission().then(p => {
         if (p === "granted") {
             subscribeUser();
@@ -207,9 +206,9 @@ function edytujLek(i) {
     usunLek(i);
 }
 
-/* -------------------------
-   SUBSKRYPCJA PUSH
--------------------------- */
+// --------------------------------------
+// SUBSKRYPCJA WEB PUSH
+// --------------------------------------
 async function subscribeUser() {
     const reg = await navigator.serviceWorker.ready;
 
@@ -225,9 +224,9 @@ async function subscribeUser() {
     });
 }
 
-/* -------------------------
-   WYSYŁANIE LEKÓW DO BACKENDU
--------------------------- */
+// --------------------------------------
+// SYNC LEKÓW DO BACKENDU
+// --------------------------------------
 async function syncDrugsToServer() {
     const leki = JSON.parse(localStorage.getItem("leki") || "[]");
 
@@ -238,16 +237,15 @@ async function syncDrugsToServer() {
     });
 }
 
-/* -------------------------
-   REJESTRACJA SERVICE WORKERA
--------------------------- */
+// --------------------------------------
+// SERVICE WORKER
+// --------------------------------------
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js");
 }
 </script>
 
 <style>
-/* Minimalny styl aby wszystko działało jak wcześniej */
 body { font-family: Arial; padding:20px; background:#f0f3f7; }
 .nav { display:flex; gap:10px; justify-content:center; margin-bottom:20px; }
 .nav button { padding:10px 20px; border:none; border-radius:8px; background:#dce7ff; }

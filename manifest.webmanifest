@@ -1,9 +1,35 @@
 {
   "name": "Kalkulator żywienia",
   "short_name": "Żywienie",
+  "description": "Aplikacja do obliczania żywienia oraz przypominania o lekach.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#ffffff",
-  "theme_color": "#0078ff"
+  "theme_color": "#0078ff",
+
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Dodaj lek",
+      "short_name": "Lek",
+      "description": "Szybkie przejście do modułu leków",
+      "url": "/#leki"
+    }
+  ],
+
+  "gcm_sender_id": "103953800507"
 }
